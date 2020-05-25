@@ -30,11 +30,6 @@ class TriviaTestCase(unittest.TestCase):
         """Executed after reach test"""
         pass
 
-    def test_given_behaviour(self):
-        res = self.client().get('/')
-
-        self.assertEqual(res.status_code, 200)
-
     def test_get_paginated_questions(self):
         res = self.client().get('/questions')
         data = json.loads(res.data)
@@ -45,7 +40,7 @@ class TriviaTestCase(unittest.TestCase):
         self.assertTrue(len(data['questions']))
 
     def test_error_beyond_valid_page(self):
-        res = self.client().get('/questions?page=100')
+        res = self.client().get('/questions?page=50')
         data = json.loads(res.data)
 
         self.assertEqual(res.status_code, 404)
@@ -64,8 +59,8 @@ class TriviaTestCase(unittest.TestCase):
         self.assertTrue(len(data['questions']))
         self.assertEqual(question, None)
 
-    def test_should_get_random_question_from_sience(self):
-        quiz_category = 1
+    def test_should_get_random_question_from_art(self):
+        quiz_category = 2
         quizzes_request_data = {"category": quiz_category}
         res = self.client().post('/quizzes', data=json.dumps(quizzes_request_data),
                                  headers={'Content-Type': 'application/json'})

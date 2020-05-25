@@ -42,8 +42,8 @@ def create_app(test_config=None):
         for category in Category.query.order_by(Category.id).all():
             categories[category.id] = category.type
 
-            if (len(categories) == 0):
-                abort(404)
+        if (len(categories) == 0):
+            abort(404)
 
         return jsonify({
             'success': True,
@@ -61,16 +61,16 @@ def create_app(test_config=None):
                                 for category in categories}
         total_questions = len(selection)
 
-        if len(selection) == 0:
+        if (len(current_questions) == 0):
             abort(404)
-
-        result = {
-            'success': True,
-            'questions': current_questions,
-            'total_questions': total_questions,
-            'categories': formatted_categories,
-            'current_category': None,
-        }
+        else:
+            result = {
+                'success': True,
+                'questions': current_questions,
+                'total_questions': total_questions,
+                'categories': formatted_categories,
+                'current_category': None,
+            }
 
         return jsonify(result)
 
@@ -131,7 +131,7 @@ def create_app(test_config=None):
             abort(422)
 
     # search for questions
-    @app.route('/questionssearch', methods=['POST'])
+    @app.route('/questions_search', methods=['POST'])
     def search_question():
         try:
             body = request.get_json()
@@ -187,8 +187,15 @@ def create_app(test_config=None):
             quiz_category = body.get('quiz_category', None).get('id')
             previous_questions = body.get('previous_questions', None)
 
-            questions = Question.query.filter(Question.category == quiz_category).filter(
-                Question.id.notin_(previous_questions)).all()
+            if (quiz_category == 0):
+                if previous_questions is not None:
+                    questions = Question.query.filter(
+                        Question.id.notin_(previous_questions)).all()
+                else:
+                    questions = Question.query.all()
+            else:
+                questions = Question.query.filter(Question.category == quiz_category).filter(
+                    Question.id.notin_(previous_questions)).all()
 
             if (len(questions) > 0):
                 question = random.choice(questions).format()
