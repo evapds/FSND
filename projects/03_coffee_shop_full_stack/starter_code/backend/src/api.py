@@ -79,20 +79,14 @@ def add_drinks(payload):
 @requires_auth(permission='patch:drinks')
 def update_drink(payload, id):
     body = request.get_json()
+    title = body.get("title")
 
     try:
         drink = Drink.query.filter(Drink.id == id).one_or_none()
         if drink is None:
             abort(404)
 
-        title = body.get('title', None)
-        recipe = body.get('recipe', None)
-
-        if title:
-            drink.title = title
-        if recipe:
-            drink.recipe = json.dumps([recipe])
-
+        drink.title = title
         drink.update()
 
         result = {
@@ -117,12 +111,12 @@ def delete_drink(payload, id):
             abort(404)
 
         drink.delete()
-        remaining_drinks = Drink.query.order_by(Drink.id).all()
+        #remaining_drinks = Drink.query.order_by(Drink.id).all()
 
         result = {
             'success': True,
             'delete': id,
-            'drinks': remaining_drinks
+            # 'drinks': remaining_drinks
         }
 
         return jsonify(result)
