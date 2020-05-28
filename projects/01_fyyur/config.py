@@ -8,6 +8,9 @@ DEBUG = True
 
 # Connect to the database
 
+class config(object):
+    SECRET_KEY = 'os.urandom(32)'
 
 # TODO IMPLEMENT DATABASE URL
-SQLALCHEMY_DATABASE_URI = '<Put your local database url>'
+SQLALCHEMY_DATABASE_URI = "postgres://eva@localhost:5432/fyyur"
+SQLALCHEMY_TRACK_MODIFICATIONS = False
